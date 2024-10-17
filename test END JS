@@ -1,0 +1,99 @@
+
+function validarCampos() {
+    let titulo = document.getElementById('title').value.trim();
+    let cep = document.getElementById('cep').value.trim();
+    let endereco = document.getElementById('address').value.trim();
+    let numero = document.getElementById('number').value.trim();
+    let complemento = document.getElementById('complement').value.trim();
+
+    if (!titulo && !cep && !endereco && !numero) {
+        alert('É necessário preencher todos os campos obrigatórios!');
+        return false;
+    }
+
+if(cep.length !== 8){
+    alert("O cep deve conter extamente 8 digitos!")
+    return false;
+}
+if(InputValue.length === 8){
+    getAddres(inputValue)
+}else{
+    getAddress(cep);
+
+}
+
+    return true;
+}
+
+//inpede o user de ficar enviando aquisições antes de carregar compl
+const getAddres = async(cep) =>{
+    cepInput.blur();
+}
+
+async function cadastroEndereco() {
+    if (!validarCampos()) {
+        return; 
+    }
+
+    let titulo = document.getElementById('title').value.trim();
+    let cep = document.getElementById('cep').value.trim();
+    let endereço = document.getElementById('address').value.trim();
+    let numero = document.getElementById('number').value.trim();
+    let complemento = document.getElementById('complement').value.trim();
+
+    try {
+        const apiUrl = (`https://go-wash-api.onrender.com/api/auth/address/${cep}/`)
+        let response = await fetch (apiUrl,{
+            method: "POST",
+            body: JSON.stringify({
+                "title": titulo,
+                "cep": cep,
+                "address": endereço,
+                "number": numero,
+                "complement": complemento
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+         const data = await response.json();
+         console.log(data);
+
+
+        if (response.ok) {
+            alert("Cadastro de endereço realizado com sucesso!");
+        } else {
+            let respostaErros = await response.json();
+            if (respostaErros.data && respostaErros.data.errors) {
+                if (respostaErros.data.errors.cep) {
+                    alert("Erro no CEP: " + respostaErros.data.errors.cep[0]);
+                }
+                if (respostaErros.data.errors.title) {
+                    alert("Erro no título: " + respostaErros.data.errors.title[0]);
+                }
+                if (respostaErros.data.errors.address) {
+                    alert("Erro no endereço: " + respostaErros.data.errors.address[0]);
+                }
+                if (respostaErros.data.errors.number) {
+                    alert("Erro no número: " + respostaErros.data.errors.number[0]);
+                }
+            } else {
+                alert("Ocorreu um erro. Tente novamente: " + respostaErros.message);
+            }
+        }
+    } catch (error) {
+        alert(respostaErros.data.errors);
+    }
+}
+//fazendo os campos prencheerem automatico 
+addressInput.value = data.endereço
+
+
+function handleCepBlur() {
+    let cep = document.getElementById('cep').value.trim();
+    if (cep.length === 8) {
+        getAddress(cep);
+    } else {
+        alert("O CEP deve conter exatamente 8 dígitos.");
+    }
+}
